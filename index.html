@@ -4,377 +4,105 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
   <title>EnglishChat · IB Tutor</title>
-  <!-- jsPDF CDN for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    /* ----- global reset & fonts ----- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
-    }
-    body {
-      background: #eef2f5;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-    }
-    /* ----- main card (mobile-first) ----- */
-    .chat-app {
-      max-width: 800px;
-      width: 100%;
-      background: white;
-      border-radius: 32px 32px 24px 24px;
-      box-shadow: 0 12px 30px rgba(44, 62, 102, 0.15);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 92vh;
-      max-height: 820px;
-      position: relative;
-      transition: box-shadow 0.2s;
-    }
-    /* ----- header with settings gear ----- */
-    .app-header {
-      background: #2c3e66;
-      padding: 18px 22px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: white;
-      flex-shrink: 0;
-    }
-    .app-header h1 {
-      font-weight: 500;
-      font-size: 1.4rem;
-      letter-spacing: 0.3px;
-    }
-    .app-header h1 small {
-      font-weight: 300;
-      font-size: 0.8rem;
-      opacity: 0.8;
-      margin-left: 8px;
-    }
-    .gear-icon {
-      font-size: 1.6rem;
-      cursor: pointer;
-      padding: 0 6px;
-      user-select: none;
-      transition: transform 0.2s;
-    }
-    .gear-icon:active {
-      transform: rotate(60deg);
-    }
-    /* ----- menu / action buttons ----- */
-    .menu-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 10px;
-      padding: 14px 18px;
-      background: #f7f9fc;
-      border-bottom: 1px solid #dde3eb;
-      flex-shrink: 0;
-    }
-    .menu-btn {
-      background: white;
-      border: 1px solid #c8d0dd;
-      color: #1f2a44;
-      font-weight: 500;
-      padding: 8px 18px;
-      border-radius: 40px;
-      font-size: 0.9rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: 0.15s;
-      cursor: pointer;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-      flex: 1 0 auto;
-      justify-content: center;
-    }
-    .menu-btn:hover {
-      background: #e3e9f3;
-      border-color: #2c3e66;
-    }
-    .menu-btn.primary {
-      background: #2c3e66;
-      border-color: #2c3e66;
-      color: white;
-    }
-    .menu-btn.primary:hover {
-      background: #1f2f50;
-    }
-    /* ----- chat messages container ----- */
-    .chat-box {
-      flex: 1;
-      overflow-y: auto;
-      padding: 18px 18px 8px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      background: #fafcfe;
-      scroll-behavior: smooth;
-    }
-    /* message bubbles */
-    .msg {
-      max-width: 82%;
-      padding: 14px 18px;
-      border-radius: 22px;
-      line-height: 1.5;
-      font-size: 0.98rem;
-      word-break: break-word;
-      animation: fadeIn 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-    }
-    .msg.user {
-      align-self: flex-end;
-      background: #2c3e66;
-      color: white;
-      border-bottom-right-radius: 6px;
-    }
-    .msg.bot {
-      align-self: flex-start;
-      background: #e8edf5;
-      color: #1a253b;
-      border-bottom-left-radius: 6px;
-    }
-    .msg.bot .pdf-btn {
-      margin-top: 14px;
-      background: #2c3e66;
-      color: white;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 40px;
-      font-weight: 500;
-      font-size: 0.9rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: 0.15s;
-      box-shadow: 0 2px 6px rgba(44,62,102,0.2);
-    }
-    .msg.bot .pdf-btn:hover {
-      background: #1f2f50;
-      transform: scale(1.02);
-    }
-    /* typing indicator */
-    .typing-dots {
-      display: flex;
-      gap: 6px;
-      padding: 10px 6px 6px 6px;
-      align-self: flex-start;
-    }
-    .typing-dots span {
-      width: 10px;
-      height: 10px;
-      background: #7f8fa3;
-      border-radius: 50%;
-      animation: dotPulse 1.2s infinite ease-in-out;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+    body { background: #eef2f5; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; }
+    .chat-app { max-width: 800px; width: 100%; background: white; border-radius: 32px; box-shadow: 0 12px 30px rgba(44,62,102,0.15); overflow: hidden; display: flex; flex-direction: column; height: 92vh; max-height: 820px; }
+    .app-header { background: #2c3e66; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; color: white; flex-shrink: 0; }
+    .app-header h1 { font-weight: 500; font-size: 1.4rem; }
+    .app-header h1 small { font-weight: 300; font-size: 0.8rem; opacity: 0.8; margin-left: 8px; }
+    .gear-icon { font-size: 1.6rem; cursor: pointer; padding: 0 6px; user-select: none; transition: transform 0.2s; }
+    .gear-icon:active { transform: rotate(60deg); }
+    .menu-bar { display: flex; flex-wrap: wrap; gap: 8px 10px; padding: 14px 18px; background: #f7f9fc; border-bottom: 1px solid #dde3eb; flex-shrink: 0; }
+    .menu-btn { background: white; border: 1px solid #c8d0dd; color: #1f2a44; font-weight: 500; padding: 8px 18px; border-radius: 40px; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px; transition: 0.15s; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.02); flex: 1 0 auto; justify-content: center; }
+    .menu-btn:hover { background: #e3e9f3; border-color: #2c3e66; }
+    .menu-btn.primary { background: #2c3e66; border-color: #2c3e66; color: white; }
+    .menu-btn.primary:hover { background: #1f2f50; }
+    .chat-box { flex: 1; overflow-y: auto; padding: 18px 18px 8px 18px; display: flex; flex-direction: column; gap: 16px; background: #fafcfe; scroll-behavior: smooth; }
+    .msg { max-width: 82%; padding: 14px 18px; border-radius: 22px; line-height: 1.5; font-size: 0.98rem; word-break: break-word; animation: fadeIn 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+    .msg.user { align-self: flex-end; background: #2c3e66; color: white; border-bottom-right-radius: 6px; }
+    .msg.bot { align-self: flex-start; background: #e8edf5; color: #1a253b; border-bottom-left-radius: 6px; }
+    .msg.bot .pdf-btn { margin-top: 14px; background: #2c3e66; color: white; border: none; padding: 8px 20px; border-radius: 40px; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.15s; box-shadow: 0 2px 6px rgba(44,62,102,0.2); }
+    .msg.bot .pdf-btn:hover { background: #1f2f50; transform: scale(1.02); }
+    .typing-dots { display: flex; gap: 6px; padding: 10px 6px 6px 6px; align-self: flex-start; }
+    .typing-dots span { width: 10px; height: 10px; background: #7f8fa3; border-radius: 50%; animation: dotPulse 1.2s infinite ease-in-out; }
     .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
     .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes dotPulse {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-      30% { transform: translateY(-8px); opacity: 1; }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    /* input row */
-    .input-area {
-      display: flex;
-      gap: 10px;
-      padding: 12px 18px 18px 18px;
-      background: white;
-      border-top: 1px solid #dde3eb;
-      flex-shrink: 0;
-    }
-    .input-area input {
-      flex: 1;
-      padding: 14px 18px;
-      border: 1.5px solid #d0d8e5;
-      border-radius: 50px;
-      font-size: 1rem;
-      outline: none;
-      background: #f9fbfd;
-      transition: 0.15s;
-    }
-    .input-area input:focus {
-      border-color: #2c3e66;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(44,62,102,0.1);
-    }
-    .input-area button {
-      background: #2c3e66;
-      color: white;
-      border: none;
-      width: 56px;
-      border-radius: 40px;
-      font-size: 1.4rem;
-      cursor: pointer;
-      transition: 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .input-area button:hover {
-      background: #1f2f50;
-      transform: scale(1.02);
-    }
-    /* modal overlay (quiz & settings) */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(4px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-      padding: 20px;
-    }
-    .modal-overlay.active {
-      display: flex;
-    }
-    .modal-card {
-      background: white;
-      max-width: 480px;
-      width: 100%;
-      border-radius: 36px;
-      padding: 28px 24px 24px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-      animation: modalPop 0.25s ease;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-    @keyframes modalPop {
-      from { transform: scale(0.94); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .modal-card h2 {
-      color: #1f2a44;
-      margin-bottom: 18px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .modal-card .close-modal {
-      float: right;
-      background: none;
-      border: none;
-      font-size: 1.8rem;
-      cursor: pointer;
-      color: #6b7b93;
-    }
-    .quiz-option {
-      display: block;
-      width: 100%;
-      background: #f2f6fc;
-      border: 1.5px solid #d0d8e5;
-      border-radius: 60px;
-      padding: 12px 16px;
-      margin: 8px 0;
-      text-align: left;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.1s;
-    }
-    .quiz-option:hover {
-      background: #e3e9f3;
-      border-color: #2c3e66;
-    }
-    .quiz-option.correct-feedback {
-      background: #b7d7b0;
-      border-color: #1f7b3a;
-    }
-    .quiz-option.wrong-feedback {
-      background: #f4c9c9;
-      border-color: #b13e3e;
-    }
-    .quiz-result {
-      text-align: center;
-      font-size: 1.2rem;
-      padding: 12px 0;
-    }
-    .settings-field {
-      margin: 18px 0;
-    }
-    .settings-field label {
-      font-weight: 500;
-      color: #1f2a44;
-      display: block;
-      margin-bottom: 6px;
-    }
-    .settings-field input {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid #d0d8e5;
-      border-radius: 40px;
-      font-size: 0.95rem;
-    }
-    .save-settings-btn {
-      background: #2c3e66;
-      color: white;
-      border: none;
-      padding: 12px 28px;
-      border-radius: 40px;
-      font-weight: 500;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 6px;
-    }
-    .save-settings-btn:hover {
-      background: #1f2f50;
-    }
-    /* helper */
-    .hidden {
-      display: none !important;
-    }
-    .text-center {
-      text-align: center;
-    }
-    .mt-12 { margin-top: 12px; }
-    .mb-8 { margin-bottom: 8px; }
-    /* responsive */
-    @media (max-width: 550px) {
-      .chat-app { height: 96vh; max-height: 700px; border-radius: 20px; }
-      .app-header h1 { font-size: 1.2rem; }
-      .menu-btn { font-size: 0.8rem; padding: 6px 14px; }
-    }
+    @keyframes dotPulse { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-8px); opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .input-area { display: flex; gap: 10px; padding: 12px 18px 18px 18px; background: white; border-top: 1px solid #dde3eb; flex-shrink: 0; }
+    .input-area input { flex: 1; padding: 14px 18px; border: 1.5px solid #d0d8e5; border-radius: 50px; font-size: 1rem; outline: none; background: #f9fbfd; transition: 0.15s; }
+    .input-area input:focus { border-color: #2c3e66; background: white; box-shadow: 0 0 0 3px rgba(44,62,102,0.1); }
+    .input-area button { background: #2c3e66; color: white; border: none; width: 56px; border-radius: 40px; font-size: 1.4rem; cursor: pointer; transition: 0.15s; display: flex; align-items: center; justify-content: center; }
+    .input-area button:hover { background: #1f2f50; transform: scale(1.02); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; padding: 20px; }
+    .modal-overlay.active { display: flex; }
+    .modal-card { background: white; max-width: 500px; width: 100%; border-radius: 36px; padding: 28px 24px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); animation: modalPop 0.25s ease; max-height: 80vh; overflow-y: auto; }
+    @keyframes modalPop { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-card h2 { color: #1f2a44; margin-bottom: 18px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+    .modal-card .close-modal { float: right; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #6b7b93; }
+    .quiz-option { display: block; width: 100%; background: #f2f6fc; border: 1.5px solid #d0d8e5; border-radius: 60px; padding: 12px 16px; margin: 8px 0; text-align: left; font-size: 1rem; cursor: pointer; transition: 0.1s; }
+    .quiz-option:hover { background: #e3e9f3; border-color: #2c3e66; }
+    .quiz-option.correct-feedback { background: #b7d7b0; border-color: #1f7b3a; }
+    .quiz-option.wrong-feedback { background: #f4c9c9; border-color: #b13e3e; }
+    .quiz-result { text-align: center; font-size: 1.2rem; padding: 12px 0; }
+    .settings-field { margin: 18px 0; }
+    .settings-field label { font-weight: 500; color: #1f2a44; display: block; margin-bottom: 6px; }
+    .settings-field input { width: 100%; padding: 12px 14px; border: 1.5px solid #d0d8e5; border-radius: 40px; font-size: 0.95rem; }
+    .save-settings-btn { background: #2c3e66; color: white; border: none; padding: 12px 28px; border-radius: 40px; font-weight: 500; font-size: 1rem; cursor: pointer; margin-top: 6px; }
+    .save-settings-btn:hover { background: #1f2f50; }
+    .hidden { display: none !important; }
+    .status-badge { font-size: 0.8rem; padding: 4px 12px; border-radius: 20px; background: rgba(255,255,255,0.15); margin-left: 10px; }
+    .status-badge.online { background: #4caf50; }
+    .status-badge.offline { background: #f44336; }
+    .status-badge.testing { background: #ff9800; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .config-alert { background: #fff3cd; border: 2px solid #ffc107; border-radius: 12px; padding: 16px; margin: 10px 0; }
+    .config-alert strong { color: #856404; }
+    .config-alert .btn-config { background: #2c3e66; color: white; border: none; padding: 8px 20px; border-radius: 40px; cursor: pointer; margin-top: 10px; font-weight: 500; }
+    .config-alert .btn-config:hover { background: #1f2f50; }
+    @media (max-width: 550px) { .chat-app { height: 96vh; max-height: 700px; border-radius: 20px; } .app-header h1 { font-size: 1.2rem; } .menu-btn { font-size: 0.8rem; padding: 6px 14px; } }
   </style>
 </head>
 <body>
 <div class="chat-app" id="app">
-  <!-- header -->
   <div class="app-header">
     <h1>📘 EnglishChat <small>IB · A & B</small></h1>
-    <span class="gear-icon" id="settingsToggle" title="doble clic para cambiar Worker URL">⚙️</span>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="status-badge" id="statusBadge">⏳</span>
+      <span class="gear-icon" id="settingsToggle" title="doble clic para configurar">⚙️</span>
+    </div>
   </div>
-  <!-- menu -->
   <div class="menu-bar">
     <button class="menu-btn" data-mode="a">📖 English A</button>
     <button class="menu-btn" data-mode="b">🌍 English B</button>
     <button class="menu-btn primary" id="summaryBtn">📄 Resumen</button>
     <button class="menu-btn primary" id="quizBtn">🎮 Juego</button>
   </div>
-  <!-- chat box -->
-  <div class="chat-box" id="chatBox">
-    <!-- messages will be injected -->
-  </div>
-  <!-- typing indicator (hidden by default) -->
-  <div id="typingIndicator" class="typing-dots hidden">
-    <span></span><span></span><span></span>
-  </div>
-  <!-- input -->
+  <div class="chat-box" id="chatBox"></div>
+  <div id="typingIndicator" class="typing-dots hidden"><span></span><span></span><span></span></div>
   <div class="input-area">
-    <input type="text" id="userInput" placeholder="Pregunta sobre literatura, resumen..." autocomplete="off" />
+    <input type="text" id="userInput" placeholder="Escribe tu pregunta..." autocomplete="off" />
     <button id="sendBtn">➤</button>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-card">
+    <button class="close-modal" id="closeSettings">✕</button>
+    <h2>⚙️ Configuración del Worker</h2>
+    <div class="settings-field">
+      <label>URL del Cloudflare Worker</label>
+      <input type="url" id="workerUrlInput" placeholder="https://tu-worker.workers.dev" />
+      <p style="margin-top:8px; font-size:0.85rem; color:#4a5b74;">
+        Ejemplo: https://english-chatbot-proxy.tu-usuario.workers.dev
+      </p>
+    </div>
+    <button class="save-settings-btn" id="saveWorkerUrl">💾 Guardar y Probar</button>
+    <button class="save-settings-btn" id="testWorkerUrl" style="background:#4a5b74; margin-left:10px;">🔍 Probar conexión</button>
+    <div id="configStatus" style="margin-top:12px; padding:10px; border-radius:8px; display:none;"></div>
   </div>
 </div>
 
@@ -387,343 +115,473 @@
   </div>
 </div>
 
-<!-- SETTINGS MODAL (worker URL) -->
-<div class="modal-overlay" id="settingsModal">
-  <div class="modal-card">
-    <button class="close-modal" id="closeSettings">✕</button>
-    <h2>⚙️ Configurar Worker</h2>
-    <div class="settings-field">
-      <label>URL del Cloudflare Worker</label>
-      <input type="url" id="workerUrlInput" placeholder="https://tu-worker.workers.dev" />
-    </div>
-    <button class="save-settings-btn" id="saveWorkerUrl">Guardar URL</button>
-    <p style="margin-top:10px; font-size:0.85rem; color:#4a5b74;">Doble clic en ⚙️ para volver a abrir.</p>
-  </div>
-</div>
-
 <script>
-  (function() {
-    "use strict";
+(function() {
+  "use strict";
 
-    // ---------- CONFIG & STATE ----------
-    const DEFAULT_WORKER = 'https://tu-worker.workers.dev';  // replace with actual after deploy
-    let WORKER_URL = localStorage.getItem('workerUrl') || DEFAULT_WORKER;
+  // ============================================
+  // CONFIGURACIÓN INICIAL
+  // ============================================
+  const DEFAULT_WORKER = 'https://tu-worker.workers.dev';
+  let WORKER_URL = localStorage.getItem('englishchat_worker_url') || DEFAULT_WORKER;
+  let history = [];
+  const MAX_HISTORY = 10;
+  let isConfigured = false;
 
-    // conversation history (last 10 pairs)
-    let history = [];
-    const MAX_HISTORY = 10;
+  // ============================================
+  // SYSTEM PROMPT
+  // ============================================
+  const SYSTEM_PROMPT = `Eres un tutor de inglés para el Bachillerato Internacional (IB) para adolescentes de 12 a 18 años. 
+  Especialista en English A: Language and Literature y English B. 
+  Responde en español, con un tono cálido, literario y motivador. Usa emojis como 🌟🌍🪐🔭🚀🌙☀️ (nunca de dinero). 
+  Respuestas cortas (máximo 3 párrafos) a menos que se pida explícitamente un resumen extenso. 
+  Si no sabes algo, dilo con honestidad. Apoya el pensamiento crítico y la expresión en inglés. 
+  Incluye referencias a autores, técnicas literarias, y vocabulario apropiado para IB.`;
 
-    // system prompt (detailed, with IB flavour)
-    const SYSTEM_PROMPT = `Eres un tutor de inglés para el Bachillerato Internacional (IB) para adolescentes de 12 a 18 años. 
-    Especialista en English A: Language and Literature y English B. 
-    Responde en español, con un tono cálido, literario y motivador. Usa emojis como 🌟🌍🪐🔭🚀🌙☀️ (nunca de dinero). 
-    Respuestas cortas (máximo 3 párrafos) a menos que se pida explícitamente un resumen extenso. 
-    Si no sabes algo, dilo con honestidad. Apoya el pensamiento crítico y la expresión en inglés. 
-    Incluye referencias a autores, técnicas literarias, y vocabulario apropiado para IB.`;
+  // ============================================
+  // DOM REFS
+  // ============================================
+  const chatBox = document.getElementById('chatBox');
+  const userInput = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const typingIndicator = document.getElementById('typingIndicator');
+  const settingsToggle = document.getElementById('settingsToggle');
+  const settingsModal = document.getElementById('settingsModal');
+  const closeSettings = document.getElementById('closeSettings');
+  const workerUrlInput = document.getElementById('workerUrlInput');
+  const saveWorkerUrl = document.getElementById('saveWorkerUrl');
+  const testWorkerUrl = document.getElementById('testWorkerUrl');
+  const configStatus = document.getElementById('configStatus');
+  const statusBadge = document.getElementById('statusBadge');
+  const quizModal = document.getElementById('quizModal');
+  const closeQuiz = document.getElementById('closeQuiz');
+  const quizContent = document.getElementById('quizContent');
 
-    // DOM refs
-    const chatBox = document.getElementById('chatBox');
-    const userInput = document.getElementById('userInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const typingIndicator = document.getElementById('typingIndicator');
-    const settingsToggle = document.getElementById('settingsToggle');
-    const settingsModal = document.getElementById('settingsModal');
-    const closeSettings = document.getElementById('closeSettings');
-    const workerUrlInput = document.getElementById('workerUrlInput');
-    const saveWorkerUrl = document.getElementById('saveWorkerUrl');
-    const quizModal = document.getElementById('quizModal');
-    const closeQuiz = document.getElementById('closeQuiz');
-    const quizContent = document.getElementById('quizContent');
+  // ============================================
+  // UTILIDADES
+  // ============================================
+  function addMessage(text, sender, extraHtml = '') {
+    const div = document.createElement('div');
+    div.className = `msg ${sender}`;
+    div.innerHTML = text + extraHtml;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
 
-    // ---------- UTILITY: add message to chat ----------
-    function addMessage(text, sender, extraHtml = '') {
-      const div = document.createElement('div');
-      div.className = `msg ${sender}`;
-      div.innerHTML = text + extraHtml;
-      chatBox.appendChild(div);
-      chatBox.scrollTop = chatBox.scrollHeight;
+  function addBotMessage(text, pdfData = null) {
+    let extra = '';
+    if (pdfData) {
+      const title = pdfData.title || 'resumen';
+      const content = pdfData.content || text;
+      extra = `<button class="pdf-btn" data-pdf-title="${title}" data-pdf-content="${content}">📥 Descargar PDF</button>`;
     }
-
-    function addBotMessage(text, pdfData = null) {
-      let extra = '';
-      if (pdfData) {
-        const title = pdfData.title || 'resumen';
-        const content = pdfData.content || text;
-        extra = `<button class="pdf-btn" data-pdf-title="${title}" data-pdf-content="${content}">📥 Descargar PDF</button>`;
-      }
-      addMessage(text, 'bot', extra);
-      // attach PDF download listener
-      if (pdfData) {
-        const btn = chatBox.querySelector('.msg.bot:last-child .pdf-btn');
-        if (btn) {
-          btn.addEventListener('click', function(e) {
-            const title = this.dataset.pdfTitle;
-            const content = this.dataset.pdfContent;
-            generatePDF(title, content);
-          });
-        }
-      }
-    }
-
-    function addUserMessage(text) {
-      addMessage(text, 'user');
-    }
-
-    // ---------- PDF generation via jsPDF ----------
-    function generatePDF(title, content) {
-      if (typeof window.jspdf === 'undefined') {
-        alert('La librería PDF no está cargada. Revisa la conexión.');
-        return;
-      }
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('p', 'pt', 'a4');
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const margin = 40;
-      let y = 40;
-
-      doc.setFontSize(18);
-      doc.text(title || 'Resumen', margin, y);
-      y += 30;
-      doc.setFontSize(12);
-      // split long text into lines
-      const lines = doc.splitTextToSize(content || 'Sin contenido.', pageWidth - margin * 2);
-      lines.forEach(line => {
-        if (y > doc.internal.pageSize.getHeight() - 40) {
-          doc.addPage();
-          y = 40;
-        }
-        doc.text(line, margin, y);
-        y += 18;
-      });
-      const filename = `resumen_${ (title || 'tema').replace(/\s+/g, '_') }.pdf`;
-      doc.save(filename);
-    }
-
-    // ---------- call Groq via Worker (with history) ----------
-    async function sendToWorker(userMessage, mode = 'a') {
-      // show typing
-      typingIndicator.classList.remove('hidden');
-      // build messages array: system + history + user
-      const messages = [
-        { role: 'system', content: SYSTEM_PROMPT + ` (Modo: ${mode === 'a' ? 'English A' : 'English B'})` },
-        ...history,
-        { role: 'user', content: userMessage }
-      ];
-
-      try {
-        const response = await fetch(WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages })
+    addMessage(text, 'bot', extra);
+    if (pdfData) {
+      const btn = chatBox.querySelector('.msg.bot:last-child .pdf-btn');
+      if (btn) {
+        btn.addEventListener('click', function(e) {
+          const title = this.dataset.pdfTitle;
+          const content = this.dataset.pdfContent;
+          generatePDF(title, content);
         });
-        if (!response.ok) {
-          const errText = await response.text();
-          throw new Error(`Worker error (${response.status}): ${errText}`);
-        }
-        const data = await response.json();
-        // data should have { reply: string }
-        const botReply = data.reply || 'Lo siento, no pude generar una respuesta.';
-        // Update history (user + bot)
-        history.push({ role: 'user', content: userMessage });
-        history.push({ role: 'assistant', content: botReply });
-        if (history.length > MAX_HISTORY * 2) {
-          history = history.slice(-MAX_HISTORY * 2);
-        }
-        // Check if user asked for a summary (we detect via 'resumen' keyword or summaryBtn triggers)
-        const isSummary = userMessage.toLowerCase().includes('resumen') || 
-                          (window.__summaryMode && window.__summaryMode === true);
-        if (isSummary && botReply.length > 100) {
-          // treat as summary: add PDF button
-          const title = userMessage.replace(/resumen de /i, '').trim() || 'tema literario';
-          addBotMessage(botReply, { title, content: botReply });
-        } else {
-          addBotMessage(botReply);
-        }
-        window.__summaryMode = false;
-      } catch (err) {
-        console.error('Worker error:', err);
-        addBotMessage('🔌 Error de conexión con el tutor IA. Verifica que el Worker esté activo y la URL correcta.');
-      } finally {
-        typingIndicator.classList.add('hidden');
       }
     }
+  }
 
-    // ---------- handle send ----------
-    function handleSend() {
-      const text = userInput.value.trim();
-      if (!text) return;
-      userInput.value = '';
-      addUserMessage(text);
-      // detect summary mode from button or text
-      if (text.toLowerCase().includes('resumen')) {
-        window.__summaryMode = true;
-      }
-      // determine mode (from last active menu)
-      const mode = window.__currentMode || 'a';
-      sendToWorker(text, mode);
+  function addUserMessage(text) {
+    addMessage(text, 'user');
+  }
+
+  function updateStatus(status, message = '') {
+    statusBadge.textContent = status === 'online' ? '🟢 Online' : 
+                              status === 'offline' ? '🔴 Offline' : 
+                              status === 'testing' ? '🔄 Probando...' : '⏳';
+    statusBadge.className = `status-badge ${status}`;
+    if (message) console.log(message);
+  }
+
+  function showConfigAlert() {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'config-alert';
+    alertDiv.innerHTML = `
+      <strong>⚠️ Configuración necesaria</strong>
+      <p>El Worker aún no está configurado. Haz doble clic en ⚙️ para configurar la URL.</p>
+      <button class="btn-config" onclick="document.getElementById('settingsToggle').dispatchEvent(new Event('dblclick'))">
+        ⚙️ Configurar ahora
+      </button>
+    `;
+    chatBox.appendChild(alertDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // ============================================
+  // PDF GENERATION
+  // ============================================
+  function generatePDF(title, content) {
+    if (typeof window.jspdf === 'undefined') {
+      alert('La librería PDF no está cargada.');
+      return;
     }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'pt', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 40;
+    let y = 40;
 
-    // ---------- menu buttons ----------
-    document.querySelectorAll('.menu-btn[data-mode]').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const mode = this.dataset.mode;
-        window.__currentMode = mode;
-        const label = mode === 'a' ? 'English A' : 'English B';
-        addBotMessage(`📚 Has seleccionado ${label}. ¡Pregunta sobre literatura, análisis o expresión!`);
+    doc.setFontSize(18);
+    doc.text(title || 'Resumen', margin, y);
+    y += 30;
+    doc.setFontSize(12);
+    const lines = doc.splitTextToSize(content || 'Sin contenido.', pageWidth - margin * 2);
+    lines.forEach(line => {
+      if (y > doc.internal.pageSize.getHeight() - 40) {
+        doc.addPage();
+        y = 40;
+      }
+      doc.text(line, margin, y);
+      y += 18;
+    });
+    const filename = `resumen_${(title || 'tema').replace(/\s+/g, '_')}.pdf`;
+    doc.save(filename);
+  }
+
+  // ============================================
+  // PROBAR CONEXIÓN AL WORKER
+  // ============================================
+  async function testWorkerConnection(url) {
+    updateStatus('testing');
+    configStatus.style.display = 'block';
+    configStatus.innerHTML = '🔄 Probando conexión...';
+    configStatus.style.background = '#fff3cd';
+    configStatus.style.color = '#856404';
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          messages: [{ role: 'user', content: 'Hola, prueba de conexión' }] 
+        })
       });
-    });
 
-    // Summary button: prompt user for topic
-    document.getElementById('summaryBtn').addEventListener('click', function() {
-      const topic = prompt('¿Sobre qué tema deseas un resumen extenso? (ej: "Hamlet", "poesía romántica")');
-      if (topic && topic.trim()) {
-        const userMsg = `resumen de ${topic.trim()}`;
-        addUserMessage(userMsg);
-        window.__summaryMode = true;
-        sendToWorker(userMsg, window.__currentMode || 'a');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.reply || data.success) {
+          updateStatus('online');
+          configStatus.innerHTML = '✅ Conexión exitosa con el Worker.';
+          configStatus.style.background = '#d4edda';
+          configStatus.style.color = '#155724';
+          isConfigured = true;
+          return true;
+        }
       }
-    });
+      
+      updateStatus('offline');
+      const errorText = await response.text();
+      configStatus.innerHTML = `❌ Error: ${response.status} - ${errorText.substring(0, 100)}`;
+      configStatus.style.background = '#f8d7da';
+      configStatus.style.color = '#721c24';
+      return false;
+    } catch (error) {
+      updateStatus('offline');
+      configStatus.innerHTML = `❌ Error de conexión: ${error.message}`;
+      configStatus.style.background = '#f8d7da';
+      configStatus.style.color = '#721c24';
+      return false;
+    }
+  }
 
-    // Quiz button -> open modal
-    document.getElementById('quizBtn').addEventListener('click', function() {
-      openQuiz();
-    });
+  // ============================================
+  // LLAMAR A GROQ VIA WORKER
+  // ============================================
+  async function sendToWorker(userMessage, mode = 'a') {
+    // Verificar configuración
+    if (!isConfigured && WORKER_URL === DEFAULT_WORKER) {
+      addBotMessage('⚠️ Primero debes configurar la URL del Worker. Haz doble clic en ⚙️ en la esquina superior derecha.');
+      showConfigAlert();
+      return;
+    }
 
-    // ---------- QUIZ logic (astronomy, 15 questions) ----------
-    const QUESTION_BANK = [
-      { q: '¿Qué planeta es conocido como el "planeta rojo"?', options: ['Venus', 'Marte', 'Júpiter', 'Saturno'], correct: 1 },
-      { q: '¿Cuál es la estrella más cercana a la Tierra?', options: ['Próxima Centauri', 'Sirio', 'El Sol', 'Alfa Centauri'], correct: 2 },
-      { q: '¿Qué galaxia es la vecina más grande de la Vía Láctea?', options: ['Andrómeda', 'Triangulum', 'Remolino', 'Sombrero'], correct: 0 },
-      { q: '¿Qué fenómeno ocurre cuando la Luna se interpone entre el Sol y la Tierra?', options: ['Eclipse lunar', 'Eclipse solar', 'Luna llena', 'Luna nueva'], correct: 1 },
-      { q: '¿Cuántos planetas tiene el sistema solar? (clásico)', options: ['8', '9', '7', '10'], correct: 0 },
-      { q: '¿Qué misión llevó al primer hombre a la Luna?', options: ['Apolo 11', 'Apolo 13', 'Artemis', 'Gemini'], correct: 0 },
-      { q: '¿Cuál es el planeta más grande del sistema solar?', options: ['Saturno', 'Júpiter', 'Neptuno', 'Urano'], correct: 1 },
-      { q: '¿Qué es un agujero negro?', options: ['Una estrella muerta', 'Región con gravedad extrema', 'Un planeta oscuro', 'Nube de gas'], correct: 1 },
-      { q: '¿Qué telescopio espacial es famoso por sus imágenes del universo profundo?', options: ['Hubble', 'James Webb', 'Kepler', 'Chandra'], correct: 0 },
-      { q: '¿Qué planeta tiene los anillos más prominentes?', options: ['Júpiter', 'Urano', 'Saturno', 'Neptuno'], correct: 2 },
-      { q: '¿Cuál es la unidad de medida de distancias en el espacio?', options: ['Año luz', 'Kilómetro', 'Parsec', 'Unidad astronómica'], correct: 0 },
-      { q: '¿Qué estrella es la más brillante del cielo nocturno?', options: ['Sirio', 'Polaris', 'Vega', 'Betelgeuse'], correct: 0 },
-      { q: '¿Qué planeta es conocido como el "gigante de hielo"?', options: ['Neptuno', 'Urano', 'Saturno', 'Júpiter'], correct: 1 },
-      { q: '¿Qué fenómeno produce la aurora boreal?', options: ['Viento solar', 'Luz solar', 'Tormentas magnéticas', 'Rayos cósmicos'], correct: 0 },
-      { q: '¿Qué misión exploró Marte con el rover Perseverance?', options: ['NASA 2020', 'Mars 2020', 'Artemis', 'ExoMars'], correct: 1 }
+    typingIndicator.classList.remove('hidden');
+
+    const messages = [
+      { role: 'system', content: SYSTEM_PROMPT + ` (Modo: ${mode === 'a' ? 'English A' : 'English B'})` },
+      ...history,
+      { role: 'user', content: userMessage }
     ];
 
-    let currentQuiz = [];
-    let quizIndex = 0;
-    let quizScore = 0;
-    let bestScore = parseInt(localStorage.getItem('quizBestScore')) || 0;
+    try {
+      console.log('📤 Enviando a:', WORKER_URL);
+      console.log('📝 Mensajes:', messages.length);
 
-    function openQuiz() {
-      // pick 5 random questions
-      const shuffled = [...QUESTION_BANK].sort(() => Math.random() - 0.5);
-      currentQuiz = shuffled.slice(0, 5);
-      quizIndex = 0;
-      quizScore = 0;
-      renderQuizQuestion();
-      quizModal.classList.add('active');
-    }
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages })
+      });
 
-    function renderQuizQuestion() {
-      if (quizIndex >= currentQuiz.length) {
-        // show result
-        const isNewBest = quizScore > bestScore;
-        if (isNewBest) {
-          bestScore = quizScore;
-          localStorage.setItem('quizBestScore', bestScore);
-        }
-        quizContent.innerHTML = `
-          <div class="quiz-result">
-            <p>🌟 ¡Has completado el quiz!</p>
-            <p style="font-size:2rem;">${quizScore} / 5</p>
-            <p>${isNewBest ? '🏆 ¡Nuevo récord personal!' : `Mejor puntuación: ${bestScore}/5`}</p>
-            <button class="menu-btn primary" style="margin-top:16px;" id="restartQuiz">🔄 Nueva partida</button>
-            <button class="menu-btn" style="margin-top:8px;" id="closeQuizFromResult">Cerrar</button>
-          </div>
-        `;
-        document.getElementById('restartQuiz')?.addEventListener('click', openQuiz);
-        document.getElementById('closeQuizFromResult')?.addEventListener('click', ()=> quizModal.classList.remove('active'));
-        return;
+      console.log('📥 Estado:', response.status);
+
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error('❌ Error:', errText);
+        throw new Error(`Error ${response.status}: ${errText}`);
       }
-      const q = currentQuiz[quizIndex];
-      let html = `<p style="font-weight:500; margin-bottom:12px;">${quizIndex+1}. ${q.q}</p>`;
-      q.options.forEach((opt, idx) => {
-        html += `<button class="quiz-option" data-optindex="${idx}">${String.fromCharCode(65+idx)}. ${opt}</button>`;
-      });
-      html += `<p style="margin-top:10px; font-size:0.9rem; color:#4a5b74;">Pregunta ${quizIndex+1}/${currentQuiz.length}</p>`;
-      quizContent.innerHTML = html;
 
-      // attach listeners
-      document.querySelectorAll('.quiz-option').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          const selected = parseInt(this.dataset.optindex);
-          const correct = currentQuiz[quizIndex].correct;
-          // feedback
-          const allOpts = document.querySelectorAll('.quiz-option');
-          allOpts.forEach((b, i) => {
-            if (i === correct) b.classList.add('correct-feedback');
-            else if (i === selected && i !== correct) b.classList.add('wrong-feedback');
-            b.disabled = true;
-          });
-          if (selected === correct) quizScore++;
-          // next after delay
-          setTimeout(() => {
-            quizIndex++;
-            renderQuizQuestion();
-          }, 1000);
-        });
-      });
-    }
+      const data = await response.json();
+      console.log('✅ Respuesta:', data);
 
-    // close quiz
-    closeQuiz.addEventListener('click', ()=> quizModal.classList.remove('active'));
-    window.addEventListener('click', (e) => {
-      if (e.target === quizModal) quizModal.classList.remove('active');
-    });
+      if (data.error) {
+        throw new Error(data.error);
+      }
 
-    // ---------- SETTINGS (worker URL) ----------
-    settingsToggle.addEventListener('dblclick', function() {
-      workerUrlInput.value = WORKER_URL;
-      settingsModal.classList.add('active');
-    });
-    closeSettings.addEventListener('click', ()=> settingsModal.classList.remove('active'));
-    saveWorkerUrl.addEventListener('click', function() {
-      const newUrl = workerUrlInput.value.trim();
-      if (newUrl) {
-        WORKER_URL = newUrl;
-        localStorage.setItem('workerUrl', newUrl);
-        settingsModal.classList.remove('active');
-        addBotMessage('✅ URL del Worker actualizada correctamente.');
+      const botReply = data.reply || 'Lo siento, no pude generar una respuesta.';
+      
+      history.push({ role: 'user', content: userMessage });
+      history.push({ role: 'assistant', content: botReply });
+      if (history.length > MAX_HISTORY * 2) {
+        history = history.slice(-MAX_HISTORY * 2);
+      }
+
+      const isSummary = userMessage.toLowerCase().includes('resumen') || 
+                        (window.__summaryMode && window.__summaryMode === true);
+      if (isSummary && botReply.length > 100) {
+        const title = userMessage.replace(/resumen de /i, '').trim() || 'tema literario';
+        addBotMessage(botReply, { title, content: botReply });
       } else {
-        alert('Ingresa una URL válida.');
+        addBotMessage(botReply);
       }
-    });
-    window.addEventListener('click', (e) => {
-      if (e.target === settingsModal) settingsModal.classList.remove('active');
-    });
+      window.__summaryMode = false;
+      updateStatus('online');
 
-    // ---------- welcome message ----------
-    function welcome() {
-      addBotMessage('🌌 ¡Hola, futuro Experto en inglés! Soy EnglishChat, tu tutor literario. Puedes preguntarme sobre literatura en inglés o usar el menú.');
+    } catch (err) {
+      console.error('❌ Error:', err);
+      updateStatus('offline');
+      let errorMsg = '🔌 Error de conexión con el tutor IA. ';
+      if (err.message.includes('Failed to fetch')) {
+        errorMsg += 'No se puede conectar al Worker. Verifica:';
+        errorMsg += '\n• Que la URL sea correcta (doble clic en ⚙️)';
+        errorMsg += '\n• Que el Worker esté desplegado en Cloudflare';
+        errorMsg += '\n• Que la variable GROQ_API_KEY esté configurada';
+      } else {
+        errorMsg += `Detalles: ${err.message}`;
+      }
+      addBotMessage(errorMsg);
+    } finally {
+      typingIndicator.classList.add('hidden');
     }
-    welcome();
+  }
 
-    // ---------- event listeners ----------
-    sendBtn.addEventListener('click', handleSend);
-    userInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSend(); });
+  // ============================================
+  // HANDLE SEND
+  // ============================================
+  function handleSend() {
+    const text = userInput.value.trim();
+    if (!text) return;
+    userInput.value = '';
+    addUserMessage(text);
+    
+    if (text.toLowerCase().includes('resumen')) {
+      window.__summaryMode = true;
+    }
+    
+    const mode = window.__currentMode || 'a';
+    sendToWorker(text, mode);
+  }
 
-    // ---------- Service Worker registration (offline partial) ----------
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('Service Worker registrado.'))
-        .catch(() => console.log('SW no disponible.'));
+  // ============================================
+  // MENU BUTTONS
+  // ============================================
+  document.querySelectorAll('.menu-btn[data-mode]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const mode = this.dataset.mode;
+      window.__currentMode = mode;
+      const label = mode === 'a' ? 'English A' : 'English B';
+      addBotMessage(`📚 Has seleccionado ${label}. ¡Pregunta sobre literatura, análisis o expresión!`);
+    });
+  });
+
+  document.getElementById('summaryBtn').addEventListener('click', function() {
+    const topic = prompt('¿Sobre qué tema deseas un resumen extenso? (ej: "Hamlet", "poesía romántica")');
+    if (topic && topic.trim()) {
+      const userMsg = `resumen de ${topic.trim()}`;
+      addUserMessage(userMsg);
+      window.__summaryMode = true;
+      sendToWorker(userMsg, window.__currentMode || 'a');
+    }
+  });
+
+  document.getElementById('quizBtn').addEventListener('click', function() {
+    openQuiz();
+  });
+
+  // ============================================
+  // QUIZ
+  // ============================================
+  const QUESTION_BANK = [
+    { q: '¿Qué planeta es conocido como el "planeta rojo"?', options: ['Venus', 'Marte', 'Júpiter', 'Saturno'], correct: 1 },
+    { q: '¿Cuál es la estrella más cercana a la Tierra?', options: ['Próxima Centauri', 'Sirio', 'El Sol', 'Alfa Centauri'], correct: 2 },
+    { q: '¿Qué galaxia es la vecina más grande de la Vía Láctea?', options: ['Andrómeda', 'Triangulum', 'Remolino', 'Sombrero'], correct: 0 },
+    { q: '¿Qué fenómeno ocurre cuando la Luna se interpone entre el Sol y la Tierra?', options: ['Eclipse lunar', 'Eclipse solar', 'Luna llena', 'Luna nueva'], correct: 1 },
+    { q: '¿Cuántos planetas tiene el sistema solar?', options: ['8', '9', '7', '10'], correct: 0 },
+    { q: '¿Qué misión llevó al primer hombre a la Luna?', options: ['Apolo 11', 'Apolo 13', 'Artemis', 'Gemini'], correct: 0 },
+    { q: '¿Cuál es el planeta más grande del sistema solar?', options: ['Saturno', 'Júpiter', 'Neptuno', 'Urano'], correct: 1 },
+    { q: '¿Qué es un agujero negro?', options: ['Estrella muerta', 'Gravedad extrema', 'Planeta oscuro', 'Nube de gas'], correct: 1 },
+    { q: '¿Qué telescopio espacial es famoso?', options: ['Hubble', 'James Webb', 'Kepler', 'Chandra'], correct: 0 },
+    { q: '¿Qué planeta tiene los anillos más prominentes?', options: ['Júpiter', 'Urano', 'Saturno', 'Neptuno'], correct: 2 },
+    { q: '¿Cuál es la unidad de medida en el espacio?', options: ['Año luz', 'Kilómetro', 'Parsec', 'UA'], correct: 0 },
+    { q: '¿Qué estrella es la más brillante?', options: ['Sirio', 'Polaris', 'Vega', 'Betelgeuse'], correct: 0 },
+    { q: '¿Qué planeta es el "gigante de hielo"?', options: ['Neptuno', 'Urano', 'Saturno', 'Júpiter'], correct: 1 },
+    { q: '¿Qué produce la aurora boreal?', options: ['Viento solar', 'Luz solar', 'Tormentas', 'Rayos cósmicos'], correct: 0 },
+    { q: '¿Qué misión exploró Marte con Perseverance?', options: ['NASA 2020', 'Mars 2020', 'Artemis', 'ExoMars'], correct: 1 }
+  ];
+
+  let currentQuiz = [], quizIndex = 0, quizScore = 0;
+  let bestScore = parseInt(localStorage.getItem('quizBestScore')) || 0;
+
+  function openQuiz() {
+    const shuffled = [...QUESTION_BANK].sort(() => Math.random() - 0.5);
+    currentQuiz = shuffled.slice(0, 5);
+    quizIndex = 0;
+    quizScore = 0;
+    renderQuizQuestion();
+    quizModal.classList.add('active');
+  }
+
+  function renderQuizQuestion() {
+    if (quizIndex >= currentQuiz.length) {
+      const isNewBest = quizScore > bestScore;
+      if (isNewBest) {
+        bestScore = quizScore;
+        localStorage.setItem('quizBestScore', bestScore);
+      }
+      quizContent.innerHTML = `
+        <div class="quiz-result">
+          <p>🌟 ¡Has completado el quiz!</p>
+          <p style="font-size:2rem;">${quizScore} / 5</p>
+          <p>${isNewBest ? '🏆 ¡Nuevo récord!' : `Mejor: ${bestScore}/5`}</p>
+          <button class="menu-btn primary" style="margin-top:16px;" id="restartQuiz">🔄 Nueva partida</button>
+          <button class="menu-btn" style="margin-top:8px;" id="closeQuizFromResult">Cerrar</button>
+        </div>
+      `;
+      document.getElementById('restartQuiz')?.addEventListener('click', openQuiz);
+      document.getElementById('closeQuizFromResult')?.addEventListener('click', ()=> quizModal.classList.remove('active'));
+      return;
+    }
+    const q = currentQuiz[quizIndex];
+    let html = `<p style="font-weight:500; margin-bottom:12px;">${quizIndex+1}. ${q.q}</p>`;
+    q.options.forEach((opt, idx) => {
+      html += `<button class="quiz-option" data-optindex="${idx}">${String.fromCharCode(65+idx)}. ${opt}</button>`;
+    });
+    html += `<p style="margin-top:10px; font-size:0.9rem; color:#4a5b74;">Pregunta ${quizIndex+1}/${currentQuiz.length}</p>`;
+    quizContent.innerHTML = html;
+
+    document.querySelectorAll('.quiz-option').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const selected = parseInt(this.dataset.optindex);
+        const correct = currentQuiz[quizIndex].correct;
+        const allOpts = document.querySelectorAll('.quiz-option');
+        allOpts.forEach((b, i) => {
+          if (i === correct) b.classList.add('correct-feedback');
+          else if (i === selected && i !== correct) b.classList.add('wrong-feedback');
+          b.disabled = true;
+        });
+        if (selected === correct) quizScore++;
+        setTimeout(() => { quizIndex++; renderQuizQuestion(); }, 1000);
+      });
+    });
+  }
+
+  closeQuiz.addEventListener('click', ()=> quizModal.classList.remove('active'));
+  window.addEventListener('click', (e) => { if (e.target === quizModal) quizModal.classList.remove('active'); });
+
+  // ============================================
+  // SETTINGS - CONFIGURACIÓN DEL WORKER
+  // ============================================
+  settingsToggle.addEventListener('dblclick', function() {
+    workerUrlInput.value = WORKER_URL;
+    configStatus.style.display = 'none';
+    settingsModal.classList.add('active');
+  });
+
+  closeSettings.addEventListener('click', ()=> settingsModal.classList.remove('active'));
+  window.addEventListener('click', (e) => { if (e.target === settingsModal) settingsModal.classList.remove('active'); });
+
+  saveWorkerUrl.addEventListener('click', async function() {
+    const newUrl = workerUrlInput.value.trim();
+    if (!newUrl) {
+      alert('Ingresa una URL válida.');
+      return;
     }
 
-    // (optional) set default mode
-    window.__currentMode = 'a';
-    window.__summaryMode = false;
+    WORKER_URL = newUrl;
+    localStorage.setItem('englishchat_worker_url', newUrl);
+    
+    // Probar conexión
+    const ok = await testWorkerConnection(WORKER_URL);
+    if (ok) {
+      settingsModal.classList.remove('active');
+      addBotMessage('✅ URL configurada correctamente. ¡El tutor está listo!');
+    } else {
+      configStatus.style.display = 'block';
+      addBotMessage('⚠️ La URL se guardó pero no se pudo conectar. Verifica que el Worker esté activo.');
+    }
+  });
 
-    console.log('EnglishChat loaded. Worker URL:', WORKER_URL);
-  })();
+  testWorkerUrl.addEventListener('click', async function() {
+    const url = workerUrlInput.value.trim() || WORKER_URL;
+    await testWorkerConnection(url);
+  });
+
+  // ============================================
+  // INICIALIZACIÓN
+  // ============================================
+  async function init() {
+    addBotMessage('🌌 ¡Hola, futuro Experto en inglés! Soy EnglishChat, tu tutor literario.');
+    addBotMessage('📚 Puedes preguntarme sobre literatura en inglés o usar el menú.');
+    
+    // Verificar configuración
+    if (WORKER_URL === DEFAULT_WORKER) {
+      addBotMessage('⚠️ **Configuración necesaria**: Haz doble clic en ⚙️ (arriba a la derecha) para configurar la URL de tu Worker.');
+      showConfigAlert();
+      updateStatus('offline');
+    } else {
+      // Probar conexión automáticamente
+      updateStatus('testing');
+      const ok = await testWorkerConnection(WORKER_URL);
+      if (ok) {
+        addBotMessage('✅ Conexión con el Worker establecida.');
+        isConfigured = true;
+      } else {
+        addBotMessage('⚠️ No se pudo conectar al Worker. Verifica la configuración (doble clic en ⚙️).');
+      }
+    }
+  }
+
+  init();
+
+  // ============================================
+  // EVENT LISTENERS
+  // ============================================
+  sendBtn.addEventListener('click', handleSend);
+  userInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSend(); });
+
+  // ============================================
+  // SERVICE WORKER
+  // ============================================
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log('✅ Service Worker registrado.'))
+      .catch(() => console.log('⚠️ SW no disponible.'));
+  }
+
+  window.__currentMode = 'a';
+  window.__summaryMode = false;
+
+  console.log('🚀 EnglishChat cargado.');
+  console.log('📡 Worker URL:', WORKER_URL);
+  console.log('💡 Si ves errores, haz doble clic en ⚙️ para configurar la URL.');
+})();
 </script>
 </body>
 </html>
